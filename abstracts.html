@@ -1,0 +1,141 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 TRANSITIONAL//EN">
+
+<html>
+<head>
+    <title>Abstracts of Jonathan Lawder's Publications</title>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="keywords" content="Hilbert, Hilbert Curve, computer science, space-filling curve, space filling, indexing, multi-dimensional data, database research, z order, big data, multidimensional data, Lawder, Jonathan Lawder">
+   <meta name="GENERATOR" content="Mozilla/4.7 [en] (WinNT; I) [Netscape]">
+  </head>
+
+  <body>
+
+    <h3><font color="#0000aa"><a name="lawder00th"> The Application of
+	  Space-filling Curves to the Storage and Retrieval of
+	  Multi-Dimensional Data.</a></h3></font> J.K.Lawder<br> PhD Thesis
+    <br> School of Computer Science and Information Systems, Birkbeck
+    College, University of London, 2000.
+
+    <p>Indexing of multi-dimensional data has been the focus of a
+    considerable amount of research effort over many years but no
+    generally agreed paradigm has emerged to compare with the impact
+    of the B-Tree, for example, on the indexing of one-dimensional
+    data. At the same time, the need for efficient methods is ever
+    more important in an environment where databases become larger and
+    more complex in their structures.</p>
+
+    <p>Mapping multi-dimensional data to one dimension, thus enabling
+    one-dimensional access methods to be exploited, has been suggested
+    in the literature but for the most part interest has been confined
+    to the Z-order curve. The possibility of using other curves, such
+    as the Hilbert and Gray-code curves, whose characteristics differ
+    from those of the Z-order curve, has also been suggested.</p>
+
+    <p>In this thesis we design and implement a working file store
+    which is underpinned by the principle of mapping multi-dimensional
+    data to one of a variety of space-filling curves and their
+    variants. Data is then indexed using a B+ Tree which remains
+    compact, regardless of the volume and number of dimensions. The
+    implementation has entailed developing algorithms for mapping data
+    to one dimension and, most importantly, developing algorithms to
+    facilitate the querying of data in a flexible way. We focus on the
+    Hilbert curve but also consider other curves and propose new
+    alternative algorithms for querying data mapped to the Z-order
+    curve.</p>
+
+    <p>The current implementation accommodates data in up to sixteen
+    dimensions but the approach is generic and not limited to this
+    number. We report on preliminary testing of the implemetation,
+    which provides very encouraging results. We also undertake a brief
+    exploration of the application of space-filling curves to the
+    indexing of spatial data.</p>
+      
+    <h3><font color="#0000aa"> <a name="lawder00"> Using Space-filling
+	  Curves for Multi-Dimensional Indexing</a></h3></font>
+	
+    J.K.Lawder, P.J.H.King
+    <br>
+    In Brian Lings & Keith Jeffery, editors, <i>Advances in Databases: 
+      proceedings of the 17th British National Conference on Databases 
+      (BNCOD 17)</i>, volume 1832 of <i>Lecture Notes in Computer Science</i>,
+    pages 20 - 35. Springer Verlag, July 2000.
+    
+    <p>This paper presents and discusses a radically different
+    approach to multi-dimensional indexing based on the concept of the
+    space-filling curve.  It reports the novel algorithms which had to
+    be developed to create the first actual implementation of a system
+    based on this approach, on some comparative performance tests, and
+    on its actual use within the TriStarp Group at Birkbeck to provide
+    a Triple Store repository. An important result that goes beyond
+    this requirement, however, is that the performance improvement
+    over the Grid File is greater the higher the dimension.</p>
+
+<H3><FONT COLOR="#0000aa">	<A NAME="lawder00tr3">
+	Querying Multi-dimensional Data Indexed Using the Hilbert Space-Filling Curve	</A>	</H3></FONT>
+
+	J.K.Lawder and P.J.H.King
+	<BR>
+	Research Report <EM>JL3/00</EM>.
+	<BR>
+	School of Computer Science and Information Systems, Birkbeck College,
+	University of London, September 2000.
+	<P>
+	Mapping to one-dimensional values and then using a one-dimensional indexing method
+	has been proposed as a way of indexing multi-dimensional data. Most previous related
+	work uses the Z-Order Curve but more recently the Hilbert Curve has been considered
+	since it has superior clustering properties. Any approach, however, can only be of
+	practical value if there are effective methods for executing range and partial match
+	queries. This paper describes such a method for the Hilbert Curve.
+	<P>
+
+<H3><FONT COLOR="#0000aa">	<A NAME="lawder00tr2">
+	Using State Diagrams for Hilbert Curve Mappings	</A>	</H3></FONT>
+
+	J.K.Lawder
+	<BR>
+	Research Report <EM>JL2/00</EM>.
+	<BR>
+	School of Computer Science and Information Systems, Birkbeck College,
+	University of London, August 2000.
+	<P>
+	The Hilbert Curve describes a method of mapping between one and $n$ 
+	dimensions. Such mappings are of interest in a number of application domains 
+	including image processing and, more recently, in the indexing of 
+	multi-dimensional data. Relatively little work, however, has been devoted to 
+	techniques for mapping in more that 2 dimensions. This paper presents a 
+	technique for constructing state diagrams to facilitate mappings and is a 
+	specialization of an incomplete generic process described by Bially. Although 
+	the storage requirements for state diagrams increase exponentially with the 
+	number of dimensions, they are useful in up to about 9 dimensions.
+	<P>
+
+<H3><FONT COLOR="#0000aa">	<A NAME="lawder00tr1">
+	Calculation of Mappings Between One and n-dimensional Values Using the 
+	Hilbert Space-filling Curve	</A>	</H3></FONT>
+
+	J.K.Lawder
+	<BR>
+	Research Report <EM>JL1/00</EM>.
+	<BR>
+	School of Computer Science and Information Systems, Birkbeck College,
+	University of London, August 2000.
+	<P>
+	This report reproduces and briefly discusses an algorithm proposed by
+	Butz for calculating a mapping between one-dimensional values
+	and n-dimensional values regarded as being the coordinates of points lying
+	on Hilbert Curves. It suggests some practical improvements to the algorithm
+	and presents an algorithm for calculating the inverse of the mapping, from
+	n-dimensional values to one-dimensional values.
+	<P>
+
+    <hr>
+    <em class="modified">
+    </em> 
+    <address>
+      <a
+         href="mailto:TriStarpWeb@dcs.bbk.ac.uk">TriStarpWeb@dcs.bbk.ac.uk
+      </a>
+    </address>
+  </body>
+
+</html>

@@ -1,0 +1,204 @@
+/*============================================================================*/
+/*                            db_batch_update				      */
+/*============================================================================*/
+void DBASE::db_batch_update( char type, int num )
+{
+	int	i, j = 0;
+	PU_int	*k = new PU_int[dimensions];
+
+	if (type == 'i')
+	{
+		seed48(SEED);
+
+		cout << num << " record insertion\n";
+		for (i = 0; i < num; i++)
+		{
+			for (j = 0; j < dimensions; j++)
+			{
+				k[j] = lrand48();
+			}
+
+			db_data_insert( k );
+			if (!(i%50000))
+			{
+				cout << setw(6) << i / 50000 << " " << nextPID << endl;
+			}
+		}
+		cout << setw(6) << i / 50000 << " " << nextPID << endl;
+	}
+	delete [] k;
+}
+
+/*============================================================================*/
+/*                            db_getquery				      */
+/*============================================================================*/
+// storage MUST be allocated to 'p' before this is called
+bool DBASE::db_getquery( PU_int *p, string message)
+{
+	char input[256], junk[20];
+	int count, i, n;
+	unsigned int temp;
+
+	for(;;)
+	{
+		cout << message;
+		fgets(input,sizeof input,stdin);
+		if (input[0] == 'q')
+		{
+			break;
+		}
+
+		for ( i = count = 0; count < dimensions; i += n, count++)
+		{
+			if (sscanf(&input[i], "%s%n", junk, &n) != 1)
+				break;
+			if (sscanf(junk,"%u", &temp) == 1)
+				p[count] = (U_int)temp;
+			else
+				p[count] = _UNSPECIFIED_;
+		}
+
+		if (count != dimensions)
+			cout << "Incorrect number of elements entered\n";
+		else
+			return true;
+	}
+	return false;
+}
+
+/*============================================================================*/
+/*                            db_getrange				      */
+/*============================================================================*/
+bool DBASE::db_getrange( PU_int *LB, PU_int *UB )
+{
+	int i;
+
+	for (;;)
+	{
+		if (false == db_getquery( LB, "Enter LOWER bounds of the range query; 'q' to abort\n" ))
+		{
+			break;
+		}
+		if (false == db_getquery( UB, "Enter UPPER bounds of the range query: 'q' to abort\n" ))
+		{
+			break;
+		}
+
+		for (i = 0; i < dimensions; i++)
+		{
+			if (LB[i] > UB[i])
+			{
+				break;
+			}
+		}
+
+		if (i < dimensions)
+			printf("Invalid range: all lower bounds must be less than upper bounds\n");
+		else
+			return true;
+	}
+	return false;
+}
+
+/*============================================================================*/
+/*                            db_querytest				      */
+/*============================================================================*/
+void DBASE::db_querytest(void)
+{
+	char	c;
+	string	junk;
+	int	i, j;
+	PU_int	*LB = new U_int[dimensions];
+	PU_int	*UB = new U_int[dimensions];
+	PU_int	*result = new U_int[dimensions];
+	HU_int	*hresult = new U_int[dimensions];
+
+	for (;;)
+	{
+		cout << "\nWhat do you want to do? (choose a letter - `q' to quit)\n"
+		     <<	"\tp : for partial match query\n"
+		     <<	"\tr : for range query\n\n> ";
+
+		cin >> c;
+		getline( cin, junk );
+
+		switch (c)
+		{
+		case 'p':
+
+			if (false == db_getquery( LB,
+				"Enter query (any letter except 'q' for 'unspecified'), 'q' to abort\n" ))
+			{
+				goto end;
+			}
+			if (true == db_open_set( LB, &i ))
+			{
+				while (true == db_fetch_another( i, result ))
+				{
+					for (j = 0; j < dimensions; j++)
+					{
+						cout << setw(12) << result[j];
+					}
+					cout << "    "; // endl;
+					// output the point's hcode
+					hresult = ENCODE( hresult, result, dimensions );
+					for (j = dimensions - 1; j >= 0; j--)
+					{
+						cout << setw(12) << hresult[j];
+					}
+					cout << endl;
+				}
+				db_close_set( i );
+			}
+			else
+			{
+				cout << "ERROR in partial match query\n";
+			}
+
+			break;
+
+		case 'r':
+
+			if (false == db_getrange( LB, UB ))
+			{
+				goto end;
+			}
+			if (true == db_range_open_set( LB, UB, &i ))
+			{
+				while(true == db_range_fetch_another( i, result ))
+				{
+					// output the point
+					for (j = 0; j < dimensions; j++)
+					{
+						cout << setw(12) << result[j];
+					}
+					cout << "    "; // endl;
+					// output the point's hcode
+					hresult = ENCODE( hresult, result, dimensions );
+					for (j = dimensions - 1; j >= 0; j--)
+					{
+						cout << setw(12) << hresult[j];
+					}
+					cout << endl;
+				}
+				db_close_set( i );
+			}
+			else
+			{
+				cout << "ERROR in range query\n";
+			}
+
+			break;
+
+		default:
+
+			goto end;
+		}
+	}
+end:
+	delete [] LB;
+	delete [] UB;
+	delete [] result;
+	delete [] hresult;
+}
+

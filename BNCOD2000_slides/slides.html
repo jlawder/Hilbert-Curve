@@ -1,0 +1,233 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!--Converted with LaTeX2HTML 98.1p1 release (March 2nd, 1998)
+originally by Nikos Drakos (nikos@cbl.leeds.ac.uk), CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Using Space-filling Curves for Multi-dimensional Indexing</TITLE>
+<META NAME="description" CONTENT="Using Space-filling Curves for Multi-dimensional Indexing">
+<META NAME="keywords" CONTENT="slides">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<LINK REL="STYLESHEET" HREF="slides.css">
+<LINK REL="next" HREF="node1.html">
+</HEAD>
+<BODY >
+<!--Navigation Panel-->
+<!-- 
+<A NAME="tex2html1"
+ HREF="node1.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="/opt/latex2html/icons.gif/next_motif.gif"></A> 
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="/opt/latex2html/icons.gif/up_motif_gr.gif"> 
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="/opt/latex2html/icons.gif/previous_motif_gr.gif">   
+<BR>
+<B> Next:</B> <A NAME="tex2html2"
+ HREF="node1.html">About this document ...</A>
+<BR>
+<BR>
+-->
+<!--End of Navigation Panel-->
+<H1 ALIGN="CENTER">Using Space-filling Curves for Multi-dimensional Indexing</H1>
+<P ALIGN="CENTER"><STRONG>by
+<BR>
+J K Lawder and P J H King</STRONG></P>
+<P ALIGN="CENTER"><STRONG>4th July 2000</STRONG></P>
+<P ALIGN="LEFT"></P>
+
+<P>
+<DIV ALIGN="LEFT">
+<P>
+
+<FONT SIZE="+1"><B>Outline</B>
+</FONT><UL>
+<P>
+<LI>What is a space-filling curve?
+<LI>Summary of the work undertaken
+<LI>Why research into multi-dimensional indexing?
+<LI>Why use space-filling curves?
+<LI>Mapping techniques
+<LI>Querying : an example 
+
+<P>
+</UL>
+<P>
+
+<FONT SIZE="+1"><B>What is a space-filling curve?</B>
+</FONT>
+<P>
+<UL>
+<LI>a line passing through <B>every</B> point in a space, in a particular <B>order</B>, according to some <B>algorithm</B>
+<LI>some curves pass through points <B>once</B> only and so each point lies a <B>unique distance</B> along the curve away from its beginning - these are the ones we are interested in
+<LI>examples include the <B>Hilbert Curve</B> and the <B>Z-Order Curve</B>
+</UL>
+<P>
+
+
+<!-- MATH: $\includegraphics[width=\textwidth]{sfcs.eps}$ -->
+<IMG
+ WIDTH="600" HEIGHT="610" ALIGN="BOTTOM" BORDER="0"
+ SRC="img1.gif"
+ ALT="\includegraphics[width=\textwidth]{sfcs.eps}">
+<P>
+
+<FONT SIZE="+1"><B>Summary of the work undertaken</B>
+</FONT><UL>
+<LI>designed and implemented a fully functioning application for the storage and retrieval of multi-dimensional data
+<LI>it uses space-filling curves to map multi-dimensional data to one dimensional values
+<LI>currently, it works in up to 16 dimensions but can be easily extended 
+</UL>
+<P>
+
+<FONT SIZE="+1"><B>Why research into multi-dimensional indexing?</B>
+</FONT><UL>
+<LI>despite the volume of previous work, it's a problem waiting for a generally accepted <EM><B>good</B></EM> solution
+<LI>data is being gathered in ever increasing volume
+<LI>this data is increasingly higher dimensional in nature
+<LI>growing aspirations for sophisticated data processing to extract valuable information
+</UL>
+<P>
+
+<FONT SIZE="+1"><B>Why use space-filling curves?</B>
+</FONT><UL>
+<LI>in mapping multi-dimensional space to one-dimensional values, they allow <EM><B>simple</B></EM> indexing methods to be used - like the B-tree
+<LI>unlike traditional hashing functions, they preserve in the one-dimensional values the proximity of points in space
+<LI>although of interest to the research community, most previous work relates to the theoretical clustering properties of the curves and little relates to practical implementation
+</UL>
+<P>
+
+<FONT SIZE="+1"><B>What are the main problems associated with space-filling curves?</B>
+</FONT><UL>
+<LI>how to map between 1 and <I>n</I> dimensions
+	<UL>
+<LI>using state diagrams
+<LI>by calculation
+	</UL>
+<LI>how to execute queries
+<LI>what information to store and how to store it
+</UL>
+<P>
+
+
+<!-- MATH: $\includegraphics[height=\textheight]{hilbert_2d.eps}$ -->
+<IMG
+ WIDTH="600" HEIGHT="440" ALIGN="BOTTOM" BORDER="0"
+ SRC="img2.gif"
+ ALT="\includegraphics[height=\textheight]{hilbert_2d.eps}">
+<P>
+
+
+<!-- MATH: $\includegraphics[height=\textheight]{tree.eps}$ -->
+<IMG
+ WIDTH="600" HEIGHT="238" ALIGN="BOTTOM" BORDER="0"
+ SRC="img3.gif"
+ ALT="\includegraphics[height=\textheight]{tree.eps}">
+
+<P>
+
+
+<!-- MATH: $\includegraphics[width=\textwidth]{sdiag_2d.eps}$ -->
+<IMG
+ WIDTH="600" HEIGHT="503" ALIGN="BOTTOM" BORDER="0"
+ SRC="img4.gif"
+ ALT="\includegraphics[width=\textwidth]{sdiag_2d.eps}">
+<P>
+
+
+<!-- MATH: $\includegraphics[width=\textwidth]{pages.eps}$ -->
+<IMG
+ WIDTH="600" HEIGHT="600" ALIGN="BOTTOM" BORDER="0"
+ SRC="img5.gif"
+ ALT="\includegraphics[height=\textheight]{pages.eps}">
+
+<P>
+
+
+<!-- MATH: $\includegraphics[height=\textheight]{query_1.eps}$ -->
+<IMG
+ WIDTH="600" HEIGHT="799" ALIGN="BOTTOM" BORDER="0"
+ SRC="img6.gif"
+ ALT="\includegraphics[height=\textheight]{query_1.eps}">
+<P>
+
+
+<!-- MATH: $\includegraphics[height=\textheight]{query_2.eps}$ -->
+<IMG
+ WIDTH="600" HEIGHT="799" ALIGN="BOTTOM" BORDER="0"
+ SRC="img7.gif"
+ ALT="\includegraphics[height=\textheight]{query_2.eps}">
+<P>
+
+
+<!-- MATH: $\includegraphics[height=\textheight]{query_3.eps}$ -->
+<IMG
+ WIDTH="600" HEIGHT="799" ALIGN="BOTTOM" BORDER="0"
+ SRC="img8.gif"
+ ALT="\includegraphics[height=\textheight]{query_3.eps}">
+<P>
+
+
+<!-- MATH: $\includegraphics[height=\textheight]{query_4.eps}$ -->
+<IMG
+ WIDTH="600" HEIGHT="799" ALIGN="BOTTOM" BORDER="0"
+ SRC="img9.gif"
+ ALT="\includegraphics[height=\textheight]{query_4.eps}">
+<P>
+
+<P>
+
+
+<!-- MATH: $\includegraphics[height=\textheight]{query_5.eps}$ -->
+<IMG
+ WIDTH="600" HEIGHT="799" ALIGN="BOTTOM" BORDER="0"
+ SRC="img10.gif"
+ ALT="\includegraphics[height=\textheight]{query_5.eps}">
+<P>
+
+<FONT SIZE="+1"><B>Conclusions</B>
+</FONT><UL>
+<LI>worth pursuing further
+</UL>
+<P>
+
+</DIV>
+<P>
+<BR><HR>
+<!--Table of Child-Links-->
+<!--
+<A NAME="CHILD_LINKS">&#160;</A>
+<UL>
+<LI><A NAME="tex2html3"
+ HREF="node1.html">About this document ... </A>
+</UL>
+-->
+<!--End of Table of Child-Links-->
+<!--
+<HR>
+-->
+<!--Navigation Panel-->
+<!--
+<A NAME="tex2html1"
+ HREF="node1.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="/opt/latex2html/icons.gif/next_motif.gif"></A> 
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="/opt/latex2html/icons.gif/up_motif_gr.gif"> 
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="/opt/latex2html/icons.gif/previous_motif_gr.gif">   
+<BR>
+<B> Next:</B> <A NAME="tex2html2"
+ HREF="node1.html">About this document ...</A>
+ -->
+<!--End of Navigation Panel-->
+<ADDRESS>
+<I>Jonathan Lawder</I>
+<BR><I>2000-06-28</I>
+</ADDRESS>
+</BODY>
+</HTML>

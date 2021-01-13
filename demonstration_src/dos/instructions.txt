@@ -1,0 +1,317 @@
+Experimental software for the storage and retrieval of multi-dimensional data.
+==============================================================================
+
+Copyright J.K.Lawder 2001.
+This work is the subject of a US Patent Pending.
+
+1.0 Disclaimer.
+---------------
+
+This software is experimental and is provided for non-commercial demonstration
+and evaluation purposes only.
+
+Although great care has been taken in developing this software, no guarantee
+or warranty regarding its effect or performance is given whatsoever. Use it
+entirely at your own risk!
+
+2.0 What this software does.
+----------------------------
+
+This software enables multi-dimensional data to be stored persisently and
+retrieved in response to partial match or range queries.
+
+3.0 How it does it.
+-------------------
+
+The software utilises the concept of regarding multi-dimensional data as
+points lying on the Hilbert Curve that are mapped to a one-dimensional
+sequence of integers according to the order in which the curve passes through
+the points. This mapping allows the data to be indexed using a single and
+compact one-dimensional index (a B+ tree in this implementation). The index
+size in practice will typically be about one or two per cent of the data
+volume. The storage utilization of pages of data will typically be about 60
+per cent or more.
+
+4.0 Type of data that can be stored.
+------------------------------------
+
+This software stores multi-dimensional data in which each record comprises a
+fixed number of unsigned 32 bit integers. The number of integers in a record
+is the number of dimensions in the data store. Thus a record is effectively an
+array.
+
+If you want to store other data types within a record then values must be
+mapped to unsigned integers.
+
+5.0 Number of dimensions.
+-------------------------
+
+This software currently works for between 3 and 31 dimensional data. The
+number of dimensions must be determined when a data store is created and
+cannot be subsequently changed. All records placed in the data store must
+contain the same number of dimensions.
+
+6.0 Types of query supported.
+-----------------------------
+
+This software supports 'range' queries and 'partial match' queries.
+
+7.0 How to use the software.
+----------------------------
+
+The software has been written in the C++ programming language (ANSI standard).
+
+Using the program demo.exe (described below) will help you understand what the
+software does.
+
+Other than trying out the demonstration program, if you want to use this
+software, you will need to write source code to create and open a data store
+and to insert (or delete) data and to query the data store. Your software will
+need to include various header files (see below) and be linked to an archive
+file (libdemo.a; also see below).
+
+Reading source code in the files demo.cc and demo.txt will help you understand
+how the header and archive files can be used.
+
+In order to write programs that use the headers and archive, you only need to
+understand some of the details (memebers and methods) of the DBASE class
+(see file db.h) and how a record of data is represented.
+
+7.1 How a record of data is represented.
+........................................
+
+A n-dimensional record of data is expressed as an array of 'n' unsigned
+integers. In the source code, the pointer data type PU_int* is used (defined
+in gendefs.h). An instance of a PU_int* should have a number of bytes of
+memory allocated to it equal to the number of dimensions in a record of data
+times the number of bytes in an unsigned integer (ie 4 bytes). A HU_int*
+points at an array of unsigned integers holding the sequence number of a point
+on the Hilbert Curve. The first element of the array (0) holds the lowest 4
+bytes of the sequence number.
+
+7.2 How to define a database object.
+....................................
+
+Define an instance of the DBASE class using the following constructor:
+
+DBASE::DBASE ( string name, int dims, int bt_n_entries, int b_slots, int p_entries );
+
+Parameters:
+- string name: name of data store
+- int dims: number of dimensions for the data.
+- int bt_n_entries: the number of entries in a B-tree index node. (10 - 20 is
+suggested).
+- int b_slots: the number of pages of data that can be stored in main memory
+cache - called the 'buffer'. (10 - 500 is suggested).
+- int p_entries: the number of records that can be placed on a single data
+store page of storage. (35 - 1500 is suggested).
+
+Note that the amount of memory required to store the buffer will equal
+(b_slots * p_entries * dims * 4) plus the equivalent of about 4 records of
+data for page headers.
+
+7.3 How to create a data store.
+...............................
+
+Before using a data store, it must first be created
+	DBASE::db_create()
+
+7.4 Opening a data store.
+.........................
+
+A previously created data store must be opened before it can be updated or
+queried
+	DBASE::db_open()
+
+7.5 Closing a data store.
+.........................
+
+Data stores must be explicitly closed - this causes data in the buffer to be
+commited to file
+	DBASE::db_close()
+
+7.6 Inserting a record of data.
+...............................
+
+'data' is an array of unsigned integers specifying the coordinates of a point.
+	int DBASE::db_data_insert( PU_int* data )
+
+7.7 Deleting a record of data.
+..............................
+
+'data' is an array of unsigned integers specifying the coordinates of a point.
+	int DBASE::db_data_delete( PU_int* data )
+
+7.8 Executing a range query.
+............................
+
+First open a 'query set' using the DBASE method
+	bool DBASE::db_range_open_set( PU_int* LB, PU_int *HB, int *set_id ).
+Its parameter 'LB' points to the lower bound coordinates of a query range.
+Its parameter 'HB' points to the upper bound coordinates of a query range.
+(Every coordinate of the point pointed to by LB is less than or equal to the
+corresponding coordinate of the point pointed to by HB). Its parameter
+'set_id' points at an integer identifer that identifies the query set. The
+method's return value indicates whether the operation of initiating a query
+was successful.
+
+Retrieve data, lazily, in a loop using the DBASE method
+	bool DBASE::db_range_fetch_another( int set_id, PU_int *retval ).
+Its parameter set_id effectively identifies the query specification and the
+current search position within the data store. If a record is found that
+matches the query, its value, as an array of coordinates, will be pointed to
+by the parameter 'retval'. The method's return value iducates whether a record
+was found that matches the query.
+
+Once all or sufficient matches to the query have been retrieved, free
+resources used by the query by calling the DBASE method
+	bool DBASE::db_close_set( int set_id )
+passing the query's set_id as a parameter.
+
+Refer to the DBASE method db_querytest() in demo.txt for an example of how to
+use these range query methods.
+
+7.9 Executing a partial match query.
+....................................
+
+A patial match query is a type of range query in which, for the points
+defining the lower and upper bounds of the range, one or more coordinates have
+the same values in the lower and upper bound points and one or more
+coordinates have minimum and maximum domain values in the lower an upper bound
+points. Such a query can be expressed as a single point in which coordinates
+have a specified value or are designated as 'unspecified'. The literature
+refered to at the end of these instructions describes the concept further.
+
+First open a 'query set' using the DBASE method
+ 	bool DBASE::db_open_set( PU_int *point, int *set_id );
+Its parameter 'point' points to the coordinates of a point. One or more (but
+not all) of the coordinates of a point may be assigned the special value of
+'_UNSPECIFIED_', in which case records can be retrieved which contain any
+value for those coordinates, provided that the records match the specified
+values in other coordinates. Its parameter 'set_id' points at an integer
+identifer that identifies the query set. The method's return value indicates
+whether the operation of initiating a query was successful.
+
+Retrieve data, lazily, in a loop using the DBASE method
+	bool DBASE::db_fetch_another( int set_id, PU_int *retval );
+Its parameter set_id effectively identifies the query specification and the
+current search position within the data store. If a record is found that
+matches the query, its value, as an array of coordinates, will be pointed to
+by the parameter 'retval'. The method's return value iducates whether a record
+was found that matches the query.
+
+Once all or sufficient matches to the query have been retrieved, free
+resources used by the query by calling the DBASE method
+	bool DBASE::db_close_set( int set_id );
+passing the query's set_id as a parameter.
+
+Refer to the DBASE method db_querytest() in demo.txt for an example of how to
+use these partial match query methods.
+
+7.10 Miscellaneous useful methods.
+..................................
+
+Find out if a specified point exists in the data store. 'P' points at the
+first element of an array of coodinates of a point.
+	bool db_data_present( PU_int* P);
+
+Read the index entries of a data store and output <page number, key value>
+pairs to a text file. The index entry pairs are listed in ascending key value
+order. A page number locates a page of data in the data store. All records on
+a page map to sequence numbers of points on the Hilbert Curve which are equal
+to or greater than the key value (and less than the key value of higher key
+values contained in the index. The index entries are actually read from the
+data pages within the data store rather than from the index itself. The string
+parameter 'fname' is a suffix applied to the end of the name of the data store
+and used to create the output file name.
+	void DBASE::db_key_dump( string fname );
+
+Read the index entries of a data store from its index and output <page number,
+key value> pairs to a text file. The method is a BTREE class method. A DBASE
+includes a BTREE index memeber. The string parameter 'fname' is a suffix
+applied to the end of the name of the data store and used to create the output
+file name.
+	void BTREE::idx_dump( string fname );
+
+Read the contents of the data store and output them to a text file. The string
+'fname' is the name of the data store. The parameter 'type' is given the value
+'d' or 'b' depending on whether output is required as decimal numbers or
+binary numbers.
+	void DBASE::db_data_dump( string fname, char type );
+
+Randomly generate points for insertion or deletion from a data store. The
+parameter 'type' is given the value 'i' or 'd' depending on whether 'num'
+records should be randomly generated and inserted (if not already present) or
+deleted (if present in the data store).
+	void DBASE::db_batch_update( char type, int num );
+
+Ask the user to enter the specification of a partial match query.
+	bool DBASE::db_getquery( PU_int *p, string message );
+
+Ask the user to enter the specification of a range query.
+	bool DBASE::db_getrange( PU_int *LB, PU_int *UB );
+
+Ask the user what type of query they want to execute (partial match or range)
+and call db_getquery() or db_getrange() as approriate, then execute the query,
+outputting results to standard output
+	void DBASE::db_querytest( void );
+
+8.0 What files are provided in this demonstration package.
+----------------------------------------------------------
+
+instructions.txt : this file
+
+demo.exe : a complete program which demonstrates the operation of the software.
+Follow the on-screen instructions. Input a name for the data store
+when prompted and choose the number of dimensions required (between 3
+and 31). Suggested 'Btree node entries' is 10 (the number of entries
+in a B-tree index node). Suggested 'size of buffer' is 10 (the number of pages
+of data that can be stored in main memory cache). Suggested 'size of page' is
+between 35 and 1500 (the number of records that can be placed on a single
+data store page of storage). Remember first to create a data store and then to
+open it before inserting data and executiong queries.
+
+demo.cc : source code for demo.exe which can be compiled and linked with
+libdemo.a (see below).
+
+demo.txt : example source code showing how the C++ methods of the DBASE
+(database) class are used.
+
+libdemo.a : archive of object files that can be linked into your own program.
+
+btree.h, buffer.h, db.h, gendefs.h, hilbert.h, page.h, utils.h: header files
+needed to be included into your program.
+
+9.0 How to compile your program.
+--------------------------------
+
+This is best described with an example showing how to create demo.exe:
+
+	g++ -o demo.exe demo.cc libdemo.a  (linux, unix)
+	gxx -o demo.exe demo.cc libdemo.a  (dos)   - don't use gcc!
+	
+10.0 Compilers used.
+--------------------
+
+unix  : gnu gcc (object files) gnu g++ (demo.exe) : solaris 5.7
+linux : gnu gcc (object files) gnu g++ (demo.exe) : red hat 6.2 (2.2.14-5.0)
+dos   : gnu gxx (djgpp 2.03 - www.delorie.com/djgpp) : windows 95
+
+11.0 Files that make up the data store.
+---------------------------------------
+
+Once created a data store comprises the following 4 files:
+<name>.db	pages of data
+<name>.idx	btree index for pages of data in the db file
+<name>.inf	meta data for the data store (no. of dimensions, page size etc)
+<name>.fpl	a list of empty pages in the db file that are available for use
+
+12.0 Further reading.
+---------------------
+
+see link to publications at www.dcs.bbk.ac.uk/~jkl
+
+13.0 Contact details.
+---------------------
+
+email: Jonathan Lawder : jkl@dcs.bbk.ac.uk
